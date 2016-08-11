@@ -17,7 +17,9 @@ def separate_into_lines(text, widths):
 
 # generates a donut graphic representing a single data point (percentage)
 # Optional Parameters:
-#    Description (string) : label which appears under parentheses
+#    description (string) : label which appears under parentheses (defaults to none)
+#    color (rgb tuple) : color for the pie slice (defaults to Crimson Red)
+#    label (string) : large label in middle of donut (defaults to percentage)
 def donut(percent, parameters):
     # set the width and height of the image
     width = 1000
@@ -33,14 +35,15 @@ def donut(percent, parameters):
     # calculate the angles for the filled in portion of the donut graph, then draw
     start_angle = -90
     end_angle = start_angle + (3.6 * percent)
-    draw.pieslice([(0, 0), (width, height)], start_angle, end_angle, fill=colors.CRIMSON)
+    pie_color = parameters['color'] if 'color' in parameters else colors.CRIMSON
+    draw.pieslice([(0, 0), (width, height)], start_angle, end_angle, fill=pie_color)
     
     # fill in the center of the donut graph
     thickness = 100
     draw.ellipse([(thickness, thickness), (width - thickness, height - thickness)], fill=colors.WHITE)
     
     # draw the percentage number in SuecaSlab Light
-    percent_text = str(percent) + "%"
+    percent_text = str(percent) + "%" if 'label' not in parameters else parameters['label']
     percent_text_length = len(percent_text.replace('.', ''))
     # font size should depend on the length of the percentage string
     percent_font_size = {
