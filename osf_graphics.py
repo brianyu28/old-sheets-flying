@@ -41,20 +41,30 @@ def donut(percent, parameters):
     percent_font = ImageFont.truetype(fonts.SLAB_LIGHT, percent_font_size)
     # location of percentage text also depends on length of percentage string
     percent_text_size = draw.textsize(percent_text, percent_font)[0]
-    print percent_text_size
     draw.text(((width / 2) - (percent_text_size / 2), .19 * height), percent_text, fill=colors.BLACK, font=percent_font)
     
     # adds description text, one line for now
     if 'description' in parameters:
         description = parameters['description']
         description_lines = []
-        description_lines.append(description)
-        description_font = ImageFont.truetype(fonts.SLAB_HEAVY, 100)
+        if type(description) == list:
+            description_lines = description
+        else:
+            # separate into appropriate lengths
+            description_lines.append(description)
+            breakline_counter = 1
+            for line_width in [18, 15]:
+                description_lines = description_lines[:breakline_counter - 1] + textwrap.wrap(description_lines[breakline_counter - 1], width=line_width)
+                description_lines = description_lines[:breakline_counter] + [(' '.join(description_lines[breakline_counter:]))]
+                breakline_counter += 1
         
+        print description_lines
+        description_font = ImageFont.truetype(fonts.SLAB_HEAVY, 90)
         line_counter = 0
         for line in description_lines:
             line_size = draw.textsize(line, description_font)[0]
-            draw.text(((width / 2) - (line_size / 2), height / 2 + (line_counter * 100)), description, fill=colors.BLACK, font=description_font)
+            print line_size
+            draw.text(((width / 2) - (line_size / 2), height / 2 + (line_counter * 100)), line, fill=colors.BLACK, font=description_font)
             line_counter += 1
         
     
