@@ -63,12 +63,10 @@ def donut(percent, parameters):
         else:
             description_lines = separate_into_lines(description, [18, 15])
         
-        print description_lines
         description_font = ImageFont.truetype(fonts.SLAB_HEAVY, 90)
         line_counter = 0
         for line in description_lines:
             line_size = draw.textsize(line, description_font)[0]
-            print line_size
             draw.text(((width / 2) - (line_size / 2), height / 2 + (line_counter * 100)), line, fill=colors.BLACK, font=description_font)
             line_counter += 1
         
