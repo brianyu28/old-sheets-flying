@@ -4,6 +4,17 @@ import textwrap
 import osf_fonts as fonts
 import osf_colors as colors
 
+# takes a string and a list of widths (in characters), returns a list of strings by line
+def separate_into_lines(text, widths):
+    lines = []
+    lines.append(text)
+    breakline_counter = 1
+    for line_width in widths:
+        lines = lines[:breakline_counter - 1] + textwrap.wrap(lines[breakline_counter - 1], width=line_width)
+        lines = lines[:breakline_counter] + [(' '.join(lines[breakline_counter:]))]
+        breakline_counter += 1
+    return lines
+
 # generates a donut graphic representing a single data point (percentage)
 # Optional Parameters:
 #    Description (string) : label which appears under parentheses
@@ -50,13 +61,7 @@ def donut(percent, parameters):
         if type(description) == list:
             description_lines = description
         else:
-            # separate into appropriate lengths
-            description_lines.append(description)
-            breakline_counter = 1
-            for line_width in [18, 15]:
-                description_lines = description_lines[:breakline_counter - 1] + textwrap.wrap(description_lines[breakline_counter - 1], width=line_width)
-                description_lines = description_lines[:breakline_counter] + [(' '.join(description_lines[breakline_counter:]))]
-                breakline_counter += 1
+            description_lines = separate_into_lines(description, [18, 15])
         
         print description_lines
         description_font = ImageFont.truetype(fonts.SLAB_HEAVY, 90)
