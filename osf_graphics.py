@@ -20,6 +20,7 @@ def separate_into_lines(text, widths):
 #    description (string) : label which appears under parentheses (defaults to none)
 #    color (rgb tuple) : color for the pie slice (defaults to Crimson Red)
 #    label (string) : large label in middle of donut (defaults to percentage)
+#    clockwise (boolean) : determines the direction of the pie slice (defaults clockwise)
 def donut(percent, parameters):
     # set the width and height of the image
     width = 1000
@@ -33,8 +34,16 @@ def donut(percent, parameters):
     draw.ellipse([(0, 0), (width, height)], fill=colors.GRAY)
     
     # calculate the angles for the filled in portion of the donut graph, then draw
-    start_angle = -90
-    end_angle = start_angle + (3.6 * percent)
+    clockwise = parameters.get('clockwise', True)
+    
+    start_angle = 0
+    end_angle = 0
+    if clockwise:
+        start_angle = -90
+        end_angle = start_angle + (3.6 * percent)
+    else:
+        end_angle = -90
+        start_angle = end_angle - (3.6 * percent)
     pie_color = parameters['color'] if 'color' in parameters else colors.CRIMSON
     draw.pieslice([(0, 0), (width, height)], start_angle, end_angle, fill=pie_color)
     
@@ -43,15 +52,15 @@ def donut(percent, parameters):
     draw.ellipse([(thickness, thickness), (width - thickness, height - thickness)], fill=colors.WHITE)
     
     # draw the percentage number in SuecaSlab Light
-    percent_text = str(percent) + "%" if 'label' not in parameters else parameters['label']
-    percent_text_length = len(percent_text.replace('.', ''))
+    percent_text = parameters.get('label', str(percent) + '%')
+    percent_text_length = len(percent_text.replace('.', '').replace(',', ''))
     # font size should depend on the length of the percentage string
     percent_font_size = {
         1: 400,
         2: 350,
         3: 300,
         4: 225
-    }.get(percent_text_length, 300)
+    }.get(percent_text_length, 225)
     percent_font = ImageFont.truetype(fonts.SLAB_LIGHT, percent_font_size)
     # location of percentage text also depends on length of percentage string
     percent_text_size = draw.textsize(percent_text, percent_font)[0]
@@ -64,7 +73,7 @@ def donut(percent, parameters):
         if type(description) == list:
             description_lines = description
         else:
-            description_lines = separate_into_lines(description, [18, 15])
+            description_lines = separate_into_lines(description, [17, 15])
         
         description_font = ImageFont.truetype(fonts.SLAB_HEAVY, 90)
         line_counter = 0
