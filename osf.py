@@ -5,6 +5,7 @@
 import osf_fonts as fonts 
 import osf_colors as colors
 import osf_static as static
+import osf_constants as constants
 
 # import libraries
 import osf_graphics as graphics

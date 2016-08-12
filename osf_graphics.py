@@ -15,6 +15,19 @@ def separate_into_lines(text, widths):
         breakline_counter += 1
     return lines
 
+# takes an image and prepares it for presentation
+# parameter values:
+#   headline (string) : adds a headline to top of image (defaults to none)
+#   grayscale (boolean) : determines whether to grayscale image (defaults to False)
+def present_image(img, parameters={}):
+    if ('headline' in parameters) and (parameters['headline'] != ''):
+        img = image_with_headline(img, parameters['headline'], {})
+    
+    grayscale = parameters.get('grayscale', False)
+    if grayscale:
+        img = img.convert(mode="LA")
+    return img
+
 # takes an existing graphic and adds a headline to it
 # takes no parameters
 def image_with_headline(image, headline_text, parameters={}):
@@ -74,7 +87,11 @@ def donut(percent, parameters={}):
     draw.ellipse([(thickness, thickness), (width - thickness, height - thickness)], fill=colors.WHITE)
     
     # draw the percentage number in SuecaSlab Light
-    percent_text = parameters.get('label', str(percent) + '%')
+    default_percent_text = str(int(percent)) + '%' if percent.is_integer() else str(percent) + '%'
+    percent_text = parameters.get('label', default_percent_text)
+    if percent_text == '':
+        percent_text = default_percent_text
+        
     percent_text_length = len(percent_text.replace('.', '').replace(',', ''))
     # font size should depend on the length of the percentage string
     percent_font_size = {
@@ -94,7 +111,7 @@ def donut(percent, parameters={}):
         description_lines = []
         if type(description) == list:
             description_lines = description
-        else:
+        elif description != '':
             description_lines = separate_into_lines(description, [17, 15])
         
         description_font = ImageFont.truetype(fonts.SLAB_HEAVY, 90)
@@ -103,8 +120,5 @@ def donut(percent, parameters={}):
             line_size = draw.textsize(line, description_font)[0]
             draw.text(((width / 2) - (line_size / 2), height / 2 + (line_counter * 100)), line, fill=colors.BLACK, font=description_font)
             line_counter += 1
-        
-    if ('headline' in parameters) and (parameters['headline'] != ''):
-        return image_with_headline(img, parameters['headline'], {})
-    else:
-        return img
+    
+    return present_image(img, parameters)
