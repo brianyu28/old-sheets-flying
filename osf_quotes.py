@@ -21,28 +21,28 @@ def quote(quote, author, position, parameters={}):
 
     img = None
     if opinion:
-        img = Image.new('RGB', (1120, 600), "#a82931")
+        img = Image.new('RGB', (1120, 600), colors.CRIMSON)
         draw = ImageDraw.Draw(img)
         counter = 0
         for line in breakquote:
-            draw.text((28,50 + (counter * 60)), line, font=quotetext_font, fill=(255,255,255,255))
+            draw.text((28,50 + (counter * 60)), line, font=quotetext_font, fill=colors.WHITE)
             counter += 1
-        draw.text((28, 420), author, font=authortext_font, fill=(255,255,255,255))
-        draw.text((28, 490), position, font=titletext_font, fill=(255,255,255,255))
+        draw.text((28, 420), author, font=authortext_font, fill=colors.WHITE)
+        draw.text((28, 490), position, font=titletext_font, fill=colors.WHITE)
 
-        draw.text((860, 510), "opinion", font=opinion_font, fill=(255,255,255,255))
-        draw.text((922, 570), "The Harvard Crimson", font=thc_op_font, fill=(255,255,255,255))
+        draw.text((860, 510), "opinion", font=opinion_font, fill=colors.WHITE)
+        draw.text((922, 570), "The Harvard Crimson", font=thc_op_font, fill=colors.WHITE)
     else:
         seal = Image.open(static.SEAL_TRANS_SM)
-        img = Image.new('RGB', (1120,600), "white")
+        img = Image.new('RGB', (1120,600), colors.WHITE)
         img.paste(seal, (800, 250), seal)
         draw = ImageDraw.Draw(img)
-        draw.rectangle([(0,0), (1120, 30)], "#a82931")
+        draw.rectangle([(0,0), (1120, 30)], colors.CRIMSON)
         counter = 0
         for line in breakquote:
-            draw.text((28,50 + (counter * 60)), line, font=quotetext_font, fill="#a82931")
-            draw.text((28, 420), author, font=authortext_font, fill="#a82931")
-            draw.text((28, 490), position, font=titletext_font, fill="#a82931")
-            draw.text((775, 550), "The Harvard Crimson", font=thc_font, fill="#a82931")
+            draw.text((28,50 + (counter * 60)), line, font=quotetext_font, fill=colors.CRIMSON)
+            draw.text((28, 420), author, font=authortext_font, fill=colors.CRIMSON)
+            draw.text((28, 490), position, font=titletext_font, fill=colors.CRIMSON)
+            draw.text((775, 550), "The Harvard Crimson", font=thc_font, fill=colors.CRIMSON)
             counter += 1
     return img
