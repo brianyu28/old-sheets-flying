@@ -15,6 +15,28 @@ def separate_into_lines(text, widths):
         breakline_counter += 1
     return lines
 
+# takes an existing graphic and adds a headline to it
+# takes no parameters
+def image_with_headline(image, headline_text, parameters={}):
+    headline_font = ImageFont.truetype(fonts.SLAB_SEMI, 100)
+    broken_text = textwrap.wrap(headline_text, width=(image.width / 46))
+    rows = len(broken_text)
+    headline_row_height = ImageDraw.Draw(image).textsize(broken_text[0], headline_font)[1]
+    
+    padding = 50
+    width = image.width
+    height = image.height + (rows * headline_row_height) + padding
+    
+    img = Image.new('RGB', (width, height), colors.WHITE)
+    img.paste(image, (0, (rows * headline_row_height) + padding))
+    draw = ImageDraw.Draw(img)
+    line_counter = 0
+    for line in broken_text:
+        line_size = draw.textsize(line, headline_font)[0]
+        draw.text(((width / 2) - (line_size / 2), (line_counter * 100)), line, fill=colors.BLACK, font=headline_font)
+        line_counter += 1
+    return img
+
 # generates a donut graphic representing a single data point (percentage)
 # Optional Parameters:
 #    description (string) : label which appears under parentheses (defaults to none)
@@ -82,5 +104,7 @@ def donut(percent, parameters={}):
             draw.text(((width / 2) - (line_size / 2), height / 2 + (line_counter * 100)), line, fill=colors.BLACK, font=description_font)
             line_counter += 1
         
-    
-    return img
+    if ('headline' in parameters) and (parameters['headline'] != ''):
+        return image_with_headline(img, parameters['headline'], {})
+    else:
+        return img
