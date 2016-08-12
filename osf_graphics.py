@@ -15,6 +15,10 @@ def separate_into_lines(text, widths):
         breakline_counter += 1
     return lines
 
+# formats a number as a string, to 'precision' number of decimal places
+def num_to_string(number, precision):
+    '{:.{prec}f}'.format(number, prec=precision)
+
 # takes an image and prepares it for presentation
 # parameter values:
 #   headline (string) : adds a headline to top of image (defaults to none)
@@ -51,6 +55,8 @@ def image_with_headline(image, headline_text, parameters={}):
     return img
 
 # generates a donut graphic representing a single data point (percentage)
+# Parameters:
+#   percent (int) : number to represent between 0 and 100, inclusive
 # Optional Parameters:
 #    description (string) : label which appears under parentheses (defaults to none)
 #    color (rgb tuple) : color for the pie slice (defaults to Crimson Red)
@@ -87,7 +93,7 @@ def donut(percent, parameters={}):
     draw.ellipse([(thickness, thickness), (width - thickness, height - thickness)], fill=colors.WHITE)
     
     # draw the percentage number in SuecaSlab Light
-    default_percent_text = str(int(percent)) + '%' if percent.is_integer() else str(percent) + '%'
+    default_percent_text = str(int(percent)) + '%' if float(percent).is_integer() else str(percent) + '%'
     percent_text = parameters.get('label', default_percent_text)
     if percent_text == '':
         percent_text = default_percent_text
@@ -122,3 +128,18 @@ def donut(percent, parameters={}):
             line_counter += 1
     
     return present_image(img, parameters)
+
+# generates a rating graph
+# Parameters:
+#   values (list) : list of three percentages, as numbers from 0 to 100
+# Optional Parameters:
+#   padding (int) : amount of padding on the outside of the image (defaults to 50)
+#   labels (boolean) : determines whether to show labels or not (defaults to True)
+def rating(values, parameters={}):
+    if len(values) != 3:
+        return
+    
+    padding = parameters.get('padding', 50)
+    width = 1000 + (2 * padding)
+    height = 200 + (2 * padding)
+    
