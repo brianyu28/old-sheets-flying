@@ -59,7 +59,7 @@ def quote(is_opinion):
 def graphic_donut():
     msg = "Donut Graph"
     title = "Donut Graph"
-    field_names = ["Headline (optional)", "Percent (0-100)", "Description (Text)"]
+    field_names = ["Headline (optional)", "Percent (0-100)", "Description (Text)", "Grayscale (y/n/b)"]
     field_values = gui.multenterbox(msg, title, field_names)
     if field_values == None:
         return
@@ -68,8 +68,22 @@ def graphic_donut():
     percent_value = float(field_values[1].replace('%', ''))
     percent_label = field_values[1].replace('%', '') + '%'
     description = field_values[2]
+    grayscale = field_values[3] in osf.constants.YES_OPTIONS
     
-    img = osf.graphics.donut(percent_value, {"label":percent_label, "description":description, "headline":headline})
+    parameters = {
+        "label": percent_label,
+        "description": description,
+        "headline": headline,
+        "grayscale": grayscale
+    }
+    
+    if (field_values[3] in osf.constants.BOTH_OPTIONS):
+        parameters["grayscale"] = not parameters["grayscale"]
+        img = osf.graphics.donut(percent_value, parameters)
+        img.show()
+        parameters["grayscale"] = not parameters["grayscale"]
+    
+    img = osf.graphics.donut(percent_value, parameters)
     img.show()
     
 def graphic_donut_custom():
