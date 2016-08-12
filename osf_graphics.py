@@ -21,7 +21,7 @@ def separate_into_lines(text, widths):
 #    color (rgb tuple) : color for the pie slice (defaults to Crimson Red)
 #    label (string) : large label in middle of donut (defaults to percentage)
 #    clockwise (boolean) : determines the direction of the pie slice (defaults clockwise)
-def donut(percent, parameters):
+def donut(percent, parameters={}):
     # set the width and height of the image
     width = 1000
     height = 1000

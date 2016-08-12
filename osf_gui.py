@@ -1,5 +1,6 @@
 # graphical front-end for OSF
 import osf
+
 import easygui as gui
 from subprocess import Popen, PIPE
 from Tkinter import Tk
@@ -9,10 +10,14 @@ def main():
     msg = "Welcome to Old Sheets Flying. Please choose a service."
     title = "Old Sheets Flying : The Harvard Crimson"
     
+    QUOTE_NEWS = "Quote Card : News"
+    QUOTE_OPINION = "Quote Card : Opinion"
     GRAPHIC_DONUT = "Graphic : Donut - Simple"
     GRAPHIC_DONUT_CUSTOM = "Graphic : Donut - Custom"
     ABOUT = "About This Program"
     choices = [
+        QUOTE_NEWS,
+        QUOTE_OPINION,
         GRAPHIC_DONUT,
         GRAPHIC_DONUT_CUSTOM,
         ABOUT
@@ -21,6 +26,10 @@ def main():
     choice = gui.choicebox(msg, title, choices)
     if (choice == None):
         return
+    elif (choice == QUOTE_NEWS):
+        quote(False)
+    elif (choice == QUOTE_OPINION):
+        quote(True)
     elif (choice == GRAPHIC_DONUT):
         graphic_donut()
     elif (choice == GRAPHIC_DONUT_CUSTOM):
@@ -32,12 +41,28 @@ def main():
         
 def about():
     gui.msgbox("Old Sheets Flying\nCreated by Brian Yu\nCopyright 2016")
+
+def quote(is_opinion):
+    msg = "Quote Card Generator"
+    title = "Quote Card"
+    field_names = ["Quote", "Author", "Position"]
+    field_values = gui.multenterbox(msg, title, field_names)
+    if field_values == None:
+        return
+    quote = field_values[0]
+    author = field_values[1]
+    position = field_values[2]
+    
+    img = osf.quotes.quote(quote, author, position, {"opinion":is_opinion})
+    img.show()
     
 def graphic_donut():
-    msg = "Instructions:\nPERCENT is a number between 0 and 100.\nDESCRIPTION is the text which appears in the center of the donut."
+    msg = "Donut Graph"
     title = "Donut Graph"
     field_names = ["Percent (0-100)", "Description (Text)"]
     field_values = gui.multenterbox(msg, title, field_names)
+    if field_values == None:
+        return
     
     percent_value = float(field_values[0].replace('%', ''))
     percent_label = field_values[0].replace('%', '') + '%'
@@ -47,17 +72,19 @@ def graphic_donut():
     img.show()
     
 def graphic_donut_custom():
-    msg = "Enter information for this donut graph."
+    msg = "Custom Donut Graph: leave fields blank for default"
     title = "Donut Graph - Custom"
     field_names = ["Percent (0-100)", "Description (Text)", "Label (Text)", "Color (Red, 0-255)", "Color (Green, 0-255)", "Color (Blue, 0-255)", "Clockwise (y/n)"]
     field_values = gui.multenterbox(msg, title, field_names)
+    if field_values == None:
+        return
     
     percent_value = float(field_values[0].replace('%', ''))
     description = field_values[1]
-    percent_label = field_values[2]
-    color_red = int(field_values[3])
-    color_green = int(field_values[4])
-    color_blue = int(field_values[5])
+    percent_label = field_values[2] if field_values[2] != '' else str(percent_value)
+    color_red = int(field_values[3]) if field_values[3] != '' else osf.colors.CRIMSON[0]
+    color_green = int(field_values[4]) if field_values[4] != '' else osf.colors.CRIMSON[1]
+    color_blue = int(field_values[5]) if field_values[5] != '' else osf.colors.CRIMSON[2]
     clockwise = not (field_values[6] in ["n", "N", "no", "No", "0"])
     
     img = osf.graphics.donut(percent_value, {"label":percent_label, "description":description, "color":(color_red, color_green, color_blue), "clockwise":clockwise})
