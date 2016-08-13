@@ -141,11 +141,14 @@ def rating(values, parameters={}):
         return
     total = sum(values)
     
+    labels = parameters.get('labels', False)
+    label_height = 75 if labels else 0
+    
     padding = parameters.get('padding', 50)
     base_width = 1000
     base_height = 150
     width = base_width + (2 * padding)
-    height = base_height + (2 * padding)
+    height = base_height + (2 * padding) + label_height
     
     img = Image.new('RGB', (width, height), colors.WHITE)
     draw = ImageDraw.Draw(img)
@@ -156,7 +159,8 @@ def rating(values, parameters={}):
     dividers = []
     for index in range(0, num_values):
         length = base_width * (float(values[index]) / total)
-        bounds = [(padding + offset, padding), (padding + offset + length, padding + base_height)]
+        bounds = [(padding + offset, label_height + padding),
+                  (padding + offset + length, label_height + padding + base_height)]
         draw.rectangle(bounds, fill=color_palette[index])
         offset += length
         dividers.append(offset)
@@ -164,8 +168,24 @@ def rating(values, parameters={}):
     # draw the two dividers
     divider_width = 15
     for index in range(0, num_values - 1):
-        bounds = [(padding + dividers[index] - (float(divider_width) / 2), padding), (padding + dividers[index] + (divider_width / 2), padding + base_height)]
+        bounds = [(padding + dividers[index] - (float(divider_width) / 2), label_height + padding),
+                  (padding + dividers[index] + (divider_width / 2), label_height + padding + base_height)]
         draw.rectangle(bounds, fill=colors.LIGHT_GRAY)
+        
+    # draw the labels if labels are on:
+    if labels:
+        label_font = ImageFont.truetype(fonts.SANS, 50)
+        old_offset = 0
+        for index in range(0, num_values):
+            offset = dividers[index]
+            line = str(values[index]) + '%'
+            line_size = draw.textsize(line, label_font)[0]
+            print old_offset
+            print offset
+            origin = (padding + old_offset + ((offset - old_offset) / 2.0) - (line_size / 2.0), padding + (0.2 * label_height))
+            if values[index] != 0:
+                draw.text(origin, line, fill=color_palette[index], font=label_font)
+            old_offset = offset
         
     return present_image(img, parameters)
     
