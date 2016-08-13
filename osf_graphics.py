@@ -136,10 +136,37 @@ def donut(percent, parameters={}):
 #   padding (int) : amount of padding on the outside of the image (defaults to 50)
 #   labels (boolean) : determines whether to show labels or not (defaults to True)
 def rating(values, parameters={}):
-    if len(values) != 3:
+    num_values = 3
+    if len(values) != num_values:
         return
+    total = sum(values)
     
     padding = parameters.get('padding', 50)
-    width = 1000 + (2 * padding)
-    height = 200 + (2 * padding)
+    base_width = 1000
+    base_height = 150
+    width = base_width + (2 * padding)
+    height = base_height + (2 * padding)
+    
+    img = Image.new('RGB', (width, height), colors.WHITE)
+    draw = ImageDraw.Draw(img)
+    
+    # draw the three rectangles
+    color_palette = [colors.CRIMSON, colors.GRAY, colors.GREEN]
+    offset = 0
+    dividers = []
+    for index in range(0, num_values):
+        length = base_width * (float(values[index]) / total)
+        bounds = [(padding + offset, padding), (padding + offset + length, padding + base_height)]
+        draw.rectangle(bounds, fill=color_palette[index])
+        offset += length
+        dividers.append(offset)
+        
+    # draw the two dividers
+    divider_width = 15
+    for index in range(0, num_values - 1):
+        bounds = [(padding + dividers[index] - (float(divider_width) / 2), padding), (padding + dividers[index] + (divider_width / 2), padding + base_height)]
+        draw.rectangle(bounds, fill=colors.LIGHT_GRAY)
+        
+    return present_image(img, parameters)
+    
     
