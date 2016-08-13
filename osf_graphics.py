@@ -180,8 +180,6 @@ def rating(values, parameters={}):
             offset = dividers[index]
             line = str(values[index]) + '%'
             line_size = draw.textsize(line, label_font)[0]
-            print old_offset
-            print offset
             origin = (padding + old_offset + ((offset - old_offset) / 2.0) - (line_size / 2.0), padding + (0.2 * label_height))
             if values[index] != 0:
                 draw.text(origin, line, fill=color_palette[index], font=label_font)
