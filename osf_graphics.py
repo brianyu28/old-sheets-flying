@@ -178,7 +178,7 @@ def rating(values, parameters={}):
         old_offset = 0
         for index in range(0, num_values):
             offset = dividers[index]
-            line = str(values[index]) + '%'
+            line = str(int(values[index])) + '%' if values[index].is_integer() else str(values[index]) + '%'
             line_size = draw.textsize(line, label_font)[0]
             origin = (padding + old_offset + ((offset - old_offset) / 2.0) - (line_size / 2.0), padding + (0.2 * label_height))
             if values[index] != 0:
