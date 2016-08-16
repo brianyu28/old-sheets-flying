@@ -9,4 +9,5 @@ import osf_constants as constants
 
 # import libraries
 import osf_graphics as graphics
+import osf_houseads as ads
 import osf_quotes as quotes
